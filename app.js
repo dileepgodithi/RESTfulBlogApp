@@ -84,11 +84,25 @@ app.put('/blogs/:id', function(req, res){
     Blog.findByIdAndUpdate(req.params.id, req.body.blog, function(err, updatedBlog){
         if(err){
             console.log("error", err);
+            res.redirect('/blogs');
         }
         else{
             //res.render('show', {blog : updatedBlog});
             //console.log(updatedBlog);
             res.redirect('/blogs/'+req.params.id);
+        }
+    });
+});
+
+//delete
+app.delete('/blogs/:id', function(req, res){
+    Blog.findByIdAndRemove(req.params.id, function(err, deletedBlog){
+        if(err){
+            console.log("error", err);
+            res.redirect('/blogs');
+        }
+        else{
+            res.redirect('/blogs');
         }
     });
 });
