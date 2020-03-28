@@ -2,12 +2,14 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var methodOverride = require('method-override');
 
 //app config
 mongoose.connect('mongodb://localhost:27017/blog-app',{useNewUrlParser : true, useUnifiedTopology : true});
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('public'));
 app.set("view engine", "ejs");
+app.use(methodOverride('_method'));
 
 //schema
 var blogSchema = new mongoose.Schema({
@@ -20,16 +22,6 @@ var blogSchema = new mongoose.Schema({
 //model config
 var Blog = mongoose.model('Blog', blogSchema);
 
-// Blog.create({
-//     title : "Test blog",
-//     image : "https://images.unsplash.com/photo-1584551882802-ca081b505b49?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1925&q=80",
-//     body : "This is a blog application"
-//     }, function(err,dbEntry){
-//         if(err)
-//             console.log("Error", err);
-//         else
-//             console.log(dbEntry);
-// });
 //RESTful routes
 app.get('/', function(req, res){
     res.redirect('/blogs');
@@ -69,6 +61,34 @@ app.get('/blogs/:id', function(req, res){
         }
         else{
             res.render('show',{blog:foundBlog});
+        }
+    });
+});
+
+//edit
+app.get('/blogs/:id/edit', function(req, res){
+    Blog.findById(req.params.id, function(err, foundBlog){
+        if(err){
+            console.log("error", err);
+        }
+        else{
+            res.render("edit", {blog : foundBlog});
+        }
+    });
+});
+
+//update
+app.put('/blogs/:id', function(req, res){
+    //console.log(req.params.id);
+    //console.log(req.body.blog);
+    Blog.findByIdAndUpdate(req.params.id, req.body.blog, function(err, updatedBlog){
+        if(err){
+            console.log("error", err);
+        }
+        else{
+            //res.render('show', {blog : updatedBlog});
+            //console.log(updatedBlog);
+            res.redirect('/blogs/'+req.params.id);
         }
     });
 });
