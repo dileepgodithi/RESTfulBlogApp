@@ -3,10 +3,12 @@ var app = express();
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var methodOverride = require('method-override');
+var expressSanitizer = require('express-sanitizer');
 
 //app config
 mongoose.connect('mongodb://localhost:27017/blog-app',{useNewUrlParser : true, useUnifiedTopology : true});
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(expressSanitizer()); //bodyparser must come before sanitizer
 app.use(express.static('public'));
 app.set("view engine", "ejs");
 app.use(methodOverride('_method'));
@@ -43,6 +45,7 @@ app.get('/blogs/new', function(req, res){
 
 //Create
 app.post('/blogs', function(req, res){
+    req.body.blog.body = req.sanitize(req.body.blog.body);
     Blog.create(req.body.blog, function(err, newEntry){
         if(err){
             console.log("Error", err);
@@ -81,6 +84,7 @@ app.get('/blogs/:id/edit', function(req, res){
 app.put('/blogs/:id', function(req, res){
     //console.log(req.params.id);
     //console.log(req.body.blog);
+    req.body.blog.body = req.sanitize(req.body.blog.body);
     Blog.findByIdAndUpdate(req.params.id, req.body.blog, function(err, updatedBlog){
         if(err){
             console.log("error", err);

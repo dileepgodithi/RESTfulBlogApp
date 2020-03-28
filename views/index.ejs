@@ -1,12 +1,33 @@
 <%- include('partials/header') %>
-<h1 style="margin-top: 2em;">Index page!</h1>
-<% blogs.forEach(function(blog){ %>
-    <div>
-        <h4><%= blog.title %></h4>
-        <img src="<%= blog.image %>">
-        <p><%- blog.body.substring(0,100) %>...</p>
-        <p><%= blog.created %></p>
-        <a href="/blogs/<%=blog._id %>">Show more</a>
+<div class="ui main text container">
+    <div class="ui huge header" style="margin-top: 2em;">RESTful Blog</div>
+    <div class="ui top attached segment">
+        <div class="ui divided items">
+            <% blogs.forEach(function(blog){ %>
+                <div class="item">
+                    <div class="image">
+                        <img src="<%= blog.image %>">
+                    </div>
+                    <div class="content">
+                        <div class="header">
+                            <a href="/blogs/<%= blog._id %>"> <%= blog.title %> </a>
+                        </div>
+                        <div class="meta">
+                            <span><%= blog.created.toDateString() %></span>
+                        </div>
+                        <div class="description">
+                            <p><%- blog.body.substring(0,100) %>...</p>
+                        </div>
+                        <div class="extra">
+                            <a class="ui basic green button small" href="/blogs/<%=blog._id %>">
+                                Read more <i class="icon chevron circle right small"></i>
+                            </a>
+                        </div> 
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+        
     </div>
-<% }) %>
+</div>
 <%- include('partials/footer') %>
